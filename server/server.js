@@ -12,7 +12,9 @@ app.get('/read', (req, res) => {
       const sheetName = workbook.SheetNames[0]; // Assuming first sheet
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
-  
+      
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "X-Requested-With");
       res.json(jsonData); // Send JSON data as response
     } catch (error) {
       console.error('Error reading file:', error);
