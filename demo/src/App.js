@@ -3,7 +3,7 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card'
+import Card from 'react-bootstrap/Card';
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -33,6 +33,28 @@ const App = () => {
     setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, fileData.length - 1));
   };
 
+  const renderCardContent = () => {
+    const content = [];
+    if (fileData != null) {
+      const headers = fileData[0];
+      const currentData = fileData[currentIndex];
+
+      for (const key in headers) {
+        if (headers.hasOwnProperty(key)) {
+          content.push(
+            <Row key={key} className="mb-3">
+              <Col xs={4} className="font-weight-bold">
+                {headers[key]}:
+              </Col>
+              <Col xs={8}>{currentData[key]}</Col>
+            </Row>
+          );
+        }
+      }
+    }
+    return content;
+  };
+
   return (
     <Container className="mt-4">
       <h2>Questions Slideshow</h2>
@@ -40,14 +62,7 @@ const App = () => {
         <>
           <Card>
             <Card.Body>
-              {Object.entries(fileData[currentIndex]).map(([key, value], index) => (
-                <Row key={index} className="mb-3">
-                  <Col xs={4} className="font-weight-bold">
-                    {fileData[0][key]}:
-                  </Col>
-                  <Col xs={8}>{value}</Col>
-                </Row>
-              ))}
+              {renderCardContent()}
             </Card.Body>
           </Card>
           <div className="d-flex justify-content-between mt-3">
