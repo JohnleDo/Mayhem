@@ -12,7 +12,54 @@ app.get('/read', (req, res) => {
       const sheetName = workbook.SheetNames[0]; // Assuming first sheet
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      var prevQuestion = null;
+      var currQuestion = null;
       
+      const questionObject = [];
+
+      for (let item of jsonData) {
+        console.log(item);
+        console.log("------");
+
+        currQuestion = {
+          Question: item.Question,
+          Answers: [{
+            Answer: item.Answer,
+            two: item.two,
+            five: item.five,
+            ten: item.ten,
+            twenty: item.twenty,
+            fifty: item.fifty,
+            oneHundred: item.oneHundred,
+            oneHundredPlus: item.oneHundredPlus,
+            secretEightyEight: item.secretEightyEight,
+            secretOne: item.secretOne}]
+        };
+        
+        if (prevQuestion == null) {
+          prevQuestion = currQuestion;
+        }
+        else {
+          if (prevQuestion.Question == currQuestion.Question) {
+            for (let ans of prevQuestion.Answers) {
+              currQuestion.Answers.push(ans)
+            }
+            
+            prevQuestion = currQuestion;
+          }
+          else {
+            questionObject.push(prevQuestion)
+            prevQuestion = currQuestion;
+          }
+        }
+      }
+
+      // TODO
+      // Currently does not account for the last question in the excel.
+      // Solution would be checking if we are at the end and auto-appending it.
+      // Also write comments for better understanding of the loop logic.
+
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "X-Requested-With");
       res.json(jsonData); // Send JSON data as response
