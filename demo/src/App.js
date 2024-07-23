@@ -11,6 +11,12 @@ import axios from 'axios';
 const App = () => {
   const [fileData, setFileData] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(1);
+  //get rid of filler string below later 
+  const unit = {
+    question: "Fill with question",
+    answers_list: {answer:"Choice", weight:"1", secret_a:"X or O", secret_B:"X or O"},
+    visualizer: "insert asset link here"
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,9 +39,26 @@ const App = () => {
     setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, fileData.length - 1));
   };
 
+  const readUnitList = () => {
+    if (fileData != null) {
+      const headers = fileData[0];
+      const currentData = fileData[currentIndex];
+
+      for (const key in headers) {
+        if (headers.hasOwnProperty(key)) {
+          question = {key}
+          /*for () {
+
+          }*/
+        }
+      }
+    }
+  }
+
+
   const renderCardContent = () => {
     const content = [];
-    if (fileData != null) {
+    /*if (fileData != null) {
       const headers = fileData[0];
       const currentData = fileData[currentIndex];
 
@@ -51,7 +74,7 @@ const App = () => {
           );
         }
       }
-    }
+    }*/
     return content;
   };
 
