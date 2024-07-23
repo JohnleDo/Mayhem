@@ -18,10 +18,18 @@ app.get('/read', (req, res) => {
       
       const questionObject = [];
 
+      // Looping through the excel file where we compare each row with the next
+      // row to gather the multiple answers that go along with it.
+      // This works by using pointers to keep track of currentQuestion and previousQuestion
+      // and pushing the previousQuestion variable into our questionObject when both variables
+      // don't match anymore meaning we have moved onto a new question and collected all the 
+      // necessary answers that go with this question.
       for (let item of jsonData) {
         console.log(item);
         console.log("------");
 
+        // Creating our question Object containing the question and a list of answers with their
+        // value.
         currQuestion = {
           Question: item.Question,
           Answers: [{
@@ -37,10 +45,14 @@ app.get('/read', (req, res) => {
             secretOne: item.secretOne}]
         };
         
+        // Setting our first prevQuestion during the first iteration since it's null be default
         if (prevQuestion == null) {
           prevQuestion = currQuestion;
         }
         else {
+          // Checking if questions are the same, if so we collect all the answers from the previous
+          // question and appending it to the currQuestion and repeating it till we hit a case
+          // where both questions are different
           if (prevQuestion.Question == currQuestion.Question) {
             for (let ans of prevQuestion.Answers) {
               currQuestion.Answers.push(ans)
@@ -55,10 +67,8 @@ app.get('/read', (req, res) => {
         }
       }
 
-      // TODO
-      // Currently does not account for the last question in the excel.
-      // Solution would be checking if we are at the end and auto-appending it.
-      // Also write comments for better understanding of the loop logic.
+      // This is for adding the last item in the list
+      questionObject.push(prevQuestion)
 
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "X-Requested-With");
