@@ -11,13 +11,7 @@ import axios from 'axios';
 const App = () => {
   const [fileData, setFileData] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(1);
-  //get rid of filler string below later 
-  const unit = {
-    question: "Fill with question",
-    answers_list: {answer:"Choice", weight:"1", secret_a:"X or O", secret_B:"X or O"},
-    visualizer: "insert asset link here"
-  };
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,50 +26,46 @@ const App = () => {
   }, []); // Fetch data once when component mounts
 
   const handlePrevious = () => {
-    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 1));
+    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, fileData.length - 1));
   };
 
-  const readUnitList = () => {
-    if (fileData != null) {
-      const headers = fileData[0];
-      const currentData = fileData[currentIndex];
-
-      for (const key in headers) {
-        if (headers.hasOwnProperty(key)) {
-          question = {key}
-          /*for () {
-
-          }*/
-        }
-      }
-    }
-  }
-
-
   const renderCardContent = () => {
-    const content = [];
-    /*if (fileData != null) {
-      const headers = fileData[0];
-      const currentData = fileData[currentIndex];
+    if (fileData == null || fileData.length === 0) {
+      return <p>Loading...</p>;
+    }
 
-      for (const key in headers) {
-        if (headers.hasOwnProperty(key)) {
-          content.push(
-            <Row key={key} className="mb-3">
-              <Col xs={4} className="font-weight-bold">
-                {headers[key]}:
-              </Col>
-              <Col xs={8}>{currentData[key]}</Col>
-            </Row>
-          );
-        }
-      }
-    }*/
-    return content;
+    const currentData = fileData[currentIndex];
+
+    // Using for loop to iterate through Answers array
+    const answersList = [];
+    for (let i = 0; i < currentData.Answers.length; i++) {
+      answersList.push(
+        <Col xs={12} key={i}>
+          {currentData.Answers[i].Answer}
+        </Col>
+      );
+    }
+
+    return (
+      <div>
+        <Row className="mb-3">
+          <Col xs={12} className="font-weight-bold">
+            Question:
+          </Col>
+          <Col xs={12}>{currentData.Question}</Col>
+        </Row>
+        <Row className="mb-3">
+          <Col xs={12} className="font-weight-bold">
+            Answers:
+          </Col>
+          {answersList}
+        </Row>
+      </div>
+    );
   };
 
   return (
@@ -89,7 +79,7 @@ const App = () => {
             </Card.Body>
           </Card>
           <div className="d-flex justify-content-between mt-3">
-            <Button onClick={handlePrevious} disabled={currentIndex === 1}>
+            <Button onClick={handlePrevious} disabled={currentIndex === 0}>
               Previous
             </Button>
             <Button onClick={handleNext} disabled={currentIndex === fileData.length - 1}>

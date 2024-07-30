@@ -72,7 +72,7 @@ app.get('/read', (req, res) => {
 
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "X-Requested-With");
-      res.json(jsonData); // Send JSON data as response
+      res.json(questionObject); // Send JSON data as response
     } catch (error) {
       console.error('Error reading file:', error);
       res.status(500).json({ error: 'Internal server error' });
