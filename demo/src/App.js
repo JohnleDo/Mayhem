@@ -10,7 +10,8 @@ import axios from 'axios';
 
 const App = () => {
   const [fileData, setFileData] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState({});
   
   useEffect(() => {
     const fetchData = async () => {
@@ -33,19 +34,40 @@ const App = () => {
     setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, fileData.length - 1));
   };
 
+  const handleButtonClick = (value) => {
+    setSelectedAnswers((prevSelectedAnswers) => ({
+      ...prevSelectedAnswers,
+      [currentIndex]: value, // Store the selected answer for the current question
+    }));
+  };
+
+  const handleSubmit = () => {
+    // You can implement the submit logic here, like sending selectedAnswers to the server
+    console.log('Submitted answers:', selectedAnswers);
+  };
+
   const renderCardContent = () => {
     if (fileData == null || fileData.length === 0) {
       return <p>Loading...</p>;
     }
 
     const currentData = fileData[currentIndex];
+    const selectedAnswer = selectedAnswers[currentIndex]; // Get the selected answer for the current question
 
     // Using for loop to iterate through Answers array
     const answersList = [];
     for (let i = 0; i < currentData.Answers.length; i++) {
+      const answer = currentData.Answers[i].Answer;
+      const isSelected = answer === selectedAnswer; // Check if this answer is the selected one
       answersList.push(
-        <Col xs={12} key={i}>
-          {currentData.Answers[i].Answer}
+        <Col xs={12} key={i} className="mb-2">
+          <Button
+            variant={isSelected ? 'success' : 'primary'} // Highlight the selected button
+            value={answer}
+            onClick={() => handleButtonClick(answer)}
+          >
+            {answer}
+          </Button>
         </Col>
       );
     }
@@ -82,9 +104,19 @@ const App = () => {
             <Button onClick={handlePrevious} disabled={currentIndex === 0}>
               Previous
             </Button>
-            <Button onClick={handleNext} disabled={currentIndex === fileData.length - 1}>
-              Next
-            </Button>
+            {/* Conditionally render the Next or Submit button */}
+            {currentIndex === fileData.length - 1 ? (
+              <Button onClick={handleSubmit} disabled={!selectedAnswers[currentIndex]}>
+                Submit
+              </Button>
+            ) : (
+              <Button
+                onClick={handleNext}
+                disabled={!selectedAnswers[currentIndex]} // Disable if no answer selected
+              >
+                Next
+              </Button>
+            )}
           </div>
         </>
       ) : (
